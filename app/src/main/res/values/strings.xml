@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Alpha Companion</string>
+
+    <string name="desc_pair">There\'s no camera paired. Please pair a camera to continue</string>
+    <string name="action_pair">Pair</string>
+    <string name="title_activity_cdmactivity">CDMActivity</string>
+    <string name="cdm_service_name">Companion Service</string>
 </resources>
