@@ -44,7 +44,15 @@ class SonyBleCamClient(
     }
     private val locationCancellationSignal = CancellationSignal()
     private val locationUpdateListener = object : LocationListener {
-        override fun onLocationChanged(location: Location) = this@SonyBleCamClient.setLocation(location)
+        override fun onLocationChanged(location: Location) {
+            Log.d(TAG, "onLocationChanged $location")
+            this@SonyBleCamClient.setLocation(location)
+        }
+        override fun onLocationChanged(locations: List<Location?>) {
+            super.onLocationChanged(locations)
+            Log.d(TAG, "onLocationChanged [${locations.size}] $locations)")
+        }
+
         override fun onProviderEnabled(provider: String) {
             Log.d(TAG, "onProviderEnabled($provider)")
         }
@@ -60,6 +68,10 @@ class SonyBleCamClient(
             extras: Bundle?
         ) {
             Log.d(TAG, "onLocStatus($provider, $status, $extras)")
+        }
+
+        override fun onFlushComplete(requestCode: Int) {
+            Log.d(TAG, "onFlushComplete($requestCode)")
         }
     }
 
