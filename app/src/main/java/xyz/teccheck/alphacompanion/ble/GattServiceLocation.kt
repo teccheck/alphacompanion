@@ -25,6 +25,7 @@ class GattServiceLocation(gatt: QueueingBluetoothGatt, private val onInit: () ->
         this.registerCharacteristic("0000DD21", this::onReadConfig)!!
 
     private var config: LocationServiceConfig? = null
+    private var sendLocation = true
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun init() {
@@ -38,6 +39,11 @@ class GattServiceLocation(gatt: QueueingBluetoothGatt, private val onInit: () ->
         val config = this.config
         if (config == null) {
             Log.w(TAG, "tried to write location, but config is null")
+            return
+        }
+
+        if (!sendLocation) {
+            Log.w(TAG, "tried to write location, but is disabled")
             return
         }
 
@@ -84,8 +90,10 @@ class GattServiceLocation(gatt: QueueingBluetoothGatt, private val onInit: () ->
         val text = if (data.contentEquals(LOCATION_TRANSFER_AVAILABLE)) {
             "LOCATION_TRANSFER_AVAILABLE"
         } else if (data.contentEquals(LOCATION_TRANSFER_ENABLE)) {
+            sendLocation = true
             "LOCATION_TRANSFER_ENABLE"
         } else if (data.contentEquals(LOCATION_TRANSFER_DISABLE)) {
+            sendLocation = false
             "LOCATION_TRANSFER_DISABLE"
         } else {
             "UNKNOWN [${data.toHexString()}]"
