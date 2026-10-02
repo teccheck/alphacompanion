@@ -1,13 +1,11 @@
 package xyz.teccheck.alphacompanion.ui.theme
 
 import androidx.compose.material3.Typography
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import xyz.teccheck.alphacompanion.R
 
-@OptIn(ExperimentalTextApi::class)
 val figtree = FontFamily(
     Font(
         R.font.figtree_semibold,
