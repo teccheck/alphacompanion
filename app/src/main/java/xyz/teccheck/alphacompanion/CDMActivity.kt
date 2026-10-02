@@ -15,10 +15,12 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -32,8 +34,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.content.getSystemService
 import kotlinx.coroutines.CompletableDeferred
@@ -45,7 +47,6 @@ import xyz.teccheck.alphacompanion.ui.theme.AlphaCompanionTheme
 import xyz.teccheck.alphacompanion.ui.widgets.AssociatedDevicesList
 import xyz.teccheck.alphacompanion.ui.widgets.ConnectDeviceScreen
 import xyz.teccheck.alphacompanion.ui.widgets.PermissionBox
-import xyz.teccheck.alphacompanion.ui.widgets.ScanForDevicesMenu
 import java.util.concurrent.Executor
 
 private const val TAG = "CDMActivity"
@@ -62,52 +63,68 @@ class CDMActivity : ComponentActivity() {
 
     @Composable
     fun UiContent() {
-        AlphaCompanionTheme {
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = { TopBar() }) { innerPadding ->
-                Box(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                ) {
-                    MainContent()
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun MainContent() {
         val context = LocalContext.current
         val deviceManager = context.getSystemService<CompanionDeviceManager>()
         val adapter = context.getSystemService<BluetoothManager>()?.adapter
         var selectedDevice by remember {
             mutableStateOf<BluetoothDevice?>(null)
         }
-        if (deviceManager == null || adapter == null) {
-            Text(text = "No Companion device manager found. The device does not support it.")
-        } else {
-            if (selectedDevice == null) {
-                DevicesScreen(deviceManager) { device ->
-                    selectedDevice = (device.device ?: adapter.getRemoteDevice(device.address))
-                }
-            } else {
-                PermissionBox(permission = Manifest.permission.BLUETOOTH_CONNECT) {
-                    ConnectDeviceScreen(device = selectedDevice!!) {
+
+        AlphaCompanionTheme {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                topBar = { TopBar(
+                    onBack = {
                         selectedDevice = null
+                    }
+                ) }) { innerPadding ->
+                Box(
+                    modifier = Modifier
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+                ) {
+                    if (deviceManager == null || adapter == null) {
+                        Text(text = "No Companion device manager found. The device does not support it.")
+                    } else {
+                        if (selectedDevice == null) {
+                            DevicesScreen(deviceManager) { device ->
+                                selectedDevice = (device.device ?: adapter.getRemoteDevice(device.address))
+                            }
+                        } else {
+                            PermissionBox(permission = Manifest.permission.BLUETOOTH_CONNECT) {
+                                ConnectDeviceScreen(device = selectedDevice!!) {
+                                    selectedDevice = null
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    fun TopBar(modifier: Modifier = Modifier) {
+    fun TopBar(modifier: Modifier = Modifier, onBack: () -> Unit) {
         TopAppBar(
             modifier = modifier,
-            colors = TopAppBarDefaults.topAppBarColors(),
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainer
+            ),
+            navigationIcon = {
+                FilledIconButton(
+                    modifier = Modifier.padding(8.dp),
+                    colors = IconButtonDefaults.filledIconButtonColors(
+                        containerColor = MaterialTheme.colorScheme.surface,
+                        contentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
+                    onClick = onBack
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_arrow_back_24),
+                        contentDescription = stringResource(R.string.content_description_back_icon),
+                    )
+                }
+            },
             title = {
                 Text(stringResource(R.string.app_name))
             },
@@ -134,29 +151,30 @@ class CDMActivity : ComponentActivity() {
             }
         }
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            ScanForDevicesMenu(deviceManager, this@CDMActivity::requestDeviceAssociation) {
+        AssociatedDevicesList(
+            associatedDevices = associatedDevices,
+            onConnect = onConnect,
+            onDisassociate = {
+                scope.launch {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                        deviceManager.disassociate(it.id)
+                    } else {
+                        @Suppress("DEPRECATION") deviceManager.disassociate(it.address)
+                    }
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        deviceManager.stopObservingDevicePresence(it.address)
+                    }
+                    associatedDevices = deviceManager.getAssociatedDevices()
+                }
+            },
+            deviceManager,
+            this@CDMActivity::requestDeviceAssociation,
+            onDeviceAssociated = {
                 associatedDevices = associatedDevices + it
             }
-            AssociatedDevicesList(
-                associatedDevices = associatedDevices,
-                onConnect = onConnect,
-                onDisassociate = {
-                    scope.launch {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                            deviceManager.disassociate(it.id)
-                        } else {
-                            @Suppress("DEPRECATION") deviceManager.disassociate(it.address)
-                        }
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                            deviceManager.stopObservingDevicePresence(it.address)
-                        }
-                        associatedDevices = deviceManager.getAssociatedDevices()
-                    }
-                },
-            )
-        }
+        )
     }
+
 
     @RequiresApi(Build.VERSION_CODES.O)
     private suspend fun requestDeviceAssociation(deviceManager: CompanionDeviceManager): IntentSender {
