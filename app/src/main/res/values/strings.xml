@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Alpha Companion</string>
+    <string name="app_name">Compαnion</string>
 
     <string name="pair_new_camera">Pair Camera</string>
     <string name="content_description_add_icon">Add</string>
@@ -16,7 +16,6 @@
         <item quantity="many">Linking to %1$d cameras</item>
     </plurals>
 
-    <string name="title_activity_cdmactivity">CDMActivity</string>
     <string name="cdm_service_name">Companion Service</string>
     <string name="location_service_name">Location Transfer Service</string>
 </resources>

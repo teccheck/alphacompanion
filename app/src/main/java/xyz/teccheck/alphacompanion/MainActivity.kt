@@ -49,9 +49,9 @@ import xyz.teccheck.alphacompanion.ui.widgets.ConnectDeviceScreen
 import xyz.teccheck.alphacompanion.ui.widgets.PermissionBox
 import java.util.concurrent.Executor
 
-private const val TAG = "CDMActivity"
+private const val TAG = "MainActivity"
 
-class CDMActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -168,7 +168,7 @@ class CDMActivity : ComponentActivity() {
                 }
             },
             deviceManager,
-            this@CDMActivity::requestDeviceAssociation,
+            this@MainActivity::requestDeviceAssociation,
             onDeviceAssociated = {
                 deviceManager.startObservingDevicePresence(it.address)
                 associatedDevices = associatedDevices + it
