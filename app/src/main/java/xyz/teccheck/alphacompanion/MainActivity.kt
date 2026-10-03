@@ -74,6 +74,7 @@ class MainActivity : ComponentActivity() {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 topBar = { TopBar(
+                    showBackButton = selectedDevice != null,
                     onBack = {
                         selectedDevice = null
                     }
@@ -104,25 +105,27 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun TopBar(modifier: Modifier = Modifier, onBack: () -> Unit) {
+    fun TopBar(modifier: Modifier = Modifier, showBackButton: Boolean, onBack: () -> Unit) {
         TopAppBar(
             modifier = modifier,
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainer
             ),
             navigationIcon = {
-                FilledIconButton(
-                    modifier = Modifier.padding(8.dp),
-                    colors = IconButtonDefaults.filledIconButtonColors(
-                        containerColor = MaterialTheme.colorScheme.surface,
-                        contentColor = MaterialTheme.colorScheme.onSurface,
-                    ),
-                    onClick = onBack
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_arrow_back_24),
-                        contentDescription = stringResource(R.string.content_description_back_icon),
-                    )
+                if (showBackButton) {
+                    FilledIconButton(
+                        modifier = Modifier.padding(8.dp),
+                        colors = IconButtonDefaults.filledIconButtonColors(
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        onClick = onBack
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.baseline_arrow_back_24),
+                            contentDescription = stringResource(R.string.content_description_back_icon),
+                        )
+                    }
                 }
             },
             title = {
