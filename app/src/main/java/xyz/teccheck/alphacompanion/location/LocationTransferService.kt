@@ -117,11 +117,9 @@ class LocationTransferService : Service() {
         val content = when (activeClients.size) {
             0 -> getString(R.string.notification_text_link_none)
             1 -> {
-                val client = activeClients.entries.first()
-                val name = client.key.toString().uppercase() // TODO: Actual name
+                val name = activeClients.entries.first().value.getDevice().name
                 getString(R.string.notification_text_link_one, name)
             }
-
             else -> {
                 resources.getQuantityString(
                     R.plurals.notification_text_link_multiple,

@@ -10,7 +10,7 @@ import java.util.Calendar
 
 class SonyBleCamClient(
     private val context: Context,
-    device: BluetoothDevice,
+    private val device: BluetoothDevice,
     private val onClose: () -> Unit
 ) {
     private val gattCallback = object : BluetoothGattCallback() {
@@ -58,6 +58,8 @@ class SonyBleCamClient(
         if (location == null) return
         this.serviceLocation?.writeLocation(location, Calendar.getInstance())
     }
+
+    fun getDevice(): BluetoothDevice = device
 
     private fun onDisconnected() {
         Log.i(TAG, "gatt disconnected")
