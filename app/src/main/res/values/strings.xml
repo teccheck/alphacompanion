@@ -7,6 +7,16 @@
     <string name="content_description_delete_icon">Delete</string>
     <string name="content_description_back_icon">Back</string>
 
+    <string name="notification_title">Location Information Linkage</string>
+    <string name="notification_text_link_none">Waiting for cameras</string>
+    <string name="notification_text_link_one">Linking to %1$s</string>
+    <plurals name="notification_text_link_multiple">
+        <item quantity="zero">Linking to %1$d cameras</item>
+        <item quantity="one">Linking to %1$d camera</item>
+        <item quantity="many">Linking to %1$d cameras</item>
+    </plurals>
+
     <string name="title_activity_cdmactivity">CDMActivity</string>
     <string name="cdm_service_name">Companion Service</string>
+    <string name="location_service_name">Location Transfer Service</string>
 </resources>

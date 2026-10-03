@@ -170,6 +170,7 @@ class CDMActivity : ComponentActivity() {
             deviceManager,
             this@CDMActivity::requestDeviceAssociation,
             onDeviceAssociated = {
+                deviceManager.startObservingDevicePresence(it.address)
                 associatedDevices = associatedDevices + it
             }
         )

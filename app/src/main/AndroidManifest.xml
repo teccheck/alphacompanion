@@ -2,24 +2,29 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Define that the app uses CDM -->
     <uses-feature android:name="android.software.companion_device_setup" />
 
     <!-- Only needed to connect to the device once associated -->
     <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
 
-    <!-- Needed if we want to be notified when an associated device is in range -->
-    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
-
     <!-- Not required by CDM but we use it for notifying when device is in range -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
-    <!-- We want the finest location pssible -->
+    <!-- We want the finest location possible -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-    <!-- Required as the CDM service cannot get location data without it -->
+    <!-- We also need background access, otherwise LocationTransferService will not get a location -->
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+
+    <!-- Needed if we want to be notified when an associated device is in range -->
+    <uses-permission android:name="android.permission.REQUEST_OBSERVE_COMPANION_DEVICE_PRESENCE" />
+    <!-- Needed to start the LocationTransferService -->
+    <uses-permission android:name="android.permission.REQUEST_COMPANION_START_FOREGROUND_SERVICES_FROM_BACKGROUND" />
+
+    <!-- Needed to start a foreground service in the first place -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <!-- Needed for the service to access location at all -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -52,6 +57,12 @@
                 <action android:name="android.companion.CompanionDeviceService" />
             </intent-filter>
         </service>
+
+        <service
+            android:name=".location.LocationTransferService"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            android:label="@string/location_service_name" />
     </application>
 
 </manifest>
