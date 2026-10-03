@@ -39,7 +39,7 @@ object LogUtils {
         DevicePresenceEvent.EVENT_BT_DISCONNECTED -> "EVENT_BT_DISCONNECTED"
         DevicePresenceEvent.EVENT_SELF_MANAGED_APPEARED -> "EVENT_SELF_MANAGED_APPEARED"
         DevicePresenceEvent.EVENT_SELF_MANAGED_DISAPPEARED -> "EVENT_SELF_MANAGED_DISAPPEARED"
-        DevicePresenceEvent.NO_ASSOCIATION -> "NO_ASSOCIATION"
+        DevicePresenceEvent.EVENT_ASSOCIATION_REMOVED -> "EVENT_ASSOCIATION_REMOVED"
         else -> "UNKNOWN (${this.event})"
     }
 }

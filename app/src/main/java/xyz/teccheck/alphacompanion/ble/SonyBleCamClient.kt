@@ -32,6 +32,7 @@ class SonyBleCamClient(
     private lateinit var queueingGatt: QueueingBluetoothGatt
 
     private var serviceLocation: GattServiceLocation? = null
+    private var serviceParing: GattServicePairing? = null
 
     private fun onConnected() {
         Log.i(TAG, "gatt connected")
@@ -48,10 +49,13 @@ class SonyBleCamClient(
         queueingGatt = QueueingBluetoothGatt(gatt)
         gattCallbackRelay.addCallback(queueingGatt)
 
+        serviceParing = GattServicePairing(this.queueingGatt)
+        gattCallbackRelay.addCallback(serviceParing!!)
+        serviceParing!!.pair()
+
         serviceLocation = GattServiceLocation(this.queueingGatt, {})
         gattCallbackRelay.addCallback(serviceLocation!!)
-
-        serviceLocation?.init()
+        serviceLocation!!.init()
     }
 
     fun setLocation(location: Location?) {
