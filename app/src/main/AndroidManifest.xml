@@ -20,8 +20,9 @@
 
     <!-- Needed to start a foreground service in the first place -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
-    <!-- Needed for the service to access location at all -->
+    <!-- Needed for the service to access location and bt devices at all -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_CONNECTED_DEVICE" />
 
     <!-- Required to post a persistent notification for the LocationTransferService -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -38,7 +39,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.AlphaCompanion"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -61,7 +61,7 @@
         <service
             android:name=".location.LocationTransferService"
             android:exported="false"
-            android:foregroundServiceType="location"
+            android:foregroundServiceType="location|connectedDevice"
             android:label="@string/location_service_name" />
     </application>
 </manifest>

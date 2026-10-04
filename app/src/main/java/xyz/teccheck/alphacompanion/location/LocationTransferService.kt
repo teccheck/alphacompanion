@@ -6,6 +6,7 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.bluetooth.BluetoothDevice
+import android.bluetooth.BluetoothManager
 import android.content.Intent
 import android.content.pm.ServiceInfo
 import android.location.Location
@@ -13,7 +14,6 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationRequest
 import android.net.MacAddress
-import android.os.Build
 import android.os.CancellationSignal
 import android.util.Log
 import androidx.annotation.RequiresPermission
@@ -27,6 +27,10 @@ class LocationTransferService : Service() {
     private val activeClients: MutableMap<MacAddress, SonyBleCamClient> = mutableMapOf()
 
     private val notificationManager: NotificationManager by lazy {
+        applicationContext.getSystemService()!!
+    }
+
+    private val bluetoothManager: BluetoothManager by lazy {
         applicationContext.getSystemService()!!
     }
 
@@ -159,11 +163,8 @@ class LocationTransferService : Service() {
         Log.d(TAG, "onStartCommand")
         if (intent == null) return START_STICKY
 
-        val device = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(EXTRA_DEVICE, BluetoothDevice::class.java)
-        } else {
-            intent.getParcelableExtra(EXTRA_DEVICE)
-        } ?: return START_STICKY
+        val address = intent.getStringExtra(EXTRA_DEVICE_ADDRESS) ?: return START_STICKY
+        val device = bluetoothManager.adapter.getRemoteDevice(address.uppercase()) ?: return START_STICKY
 
         when (intent.action) {
             ACTION_DEVICE_APPEARED -> addCameraClient(device)
@@ -190,6 +191,6 @@ class LocationTransferService : Service() {
 
         const val ACTION_DEVICE_APPEARED = "device_appeared"
         const val ACTION_DEVICE_DISAPPEARED = "device_disappeared"
-        const val EXTRA_DEVICE = "device"
+        const val EXTRA_DEVICE_ADDRESS = "device_address"
     }
 }
