@@ -8,6 +8,7 @@ import android.app.Service
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothManager
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.pm.ServiceInfo
 import android.location.Location
 import android.location.LocationListener
@@ -16,7 +17,7 @@ import android.location.LocationRequest
 import android.net.MacAddress
 import android.os.CancellationSignal
 import android.util.Log
-import androidx.annotation.RequiresPermission
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.getSystemService
@@ -75,13 +76,21 @@ class LocationTransferService : Service() {
         updateNotification()
     }
 
-    @RequiresPermission(allOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun startLocationUpdates() {
         val executor = applicationContext.mainExecutor
         val provider = LocationManager.FUSED_PROVIDER
         val locationRequest = LocationRequest.Builder(1_000)
             .setQuality(LocationRequest.QUALITY_HIGH_ACCURACY)
             .build()
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) return
 
         locationManager.getCurrentLocation(
             provider, locationRequest, locationCancellationSignal, executor, this::setLocation
@@ -121,9 +130,10 @@ class LocationTransferService : Service() {
         val content = when (activeClients.size) {
             0 -> getString(R.string.notification_text_link_none)
             1 -> {
-                val name = activeClients.entries.first().value.getDevice().name
+                val name = activeClients.entries.first().value.getDeviceName()
                 getString(R.string.notification_text_link_one, name)
             }
+
             else -> {
                 resources.getQuantityString(
                     R.plurals.notification_text_link_multiple,
@@ -164,7 +174,8 @@ class LocationTransferService : Service() {
         if (intent == null) return START_STICKY
 
         val address = intent.getStringExtra(EXTRA_DEVICE_ADDRESS) ?: return START_STICKY
-        val device = bluetoothManager.adapter.getRemoteDevice(address.uppercase()) ?: return START_STICKY
+        val device =
+            bluetoothManager.adapter.getRemoteDevice(address.uppercase()) ?: return START_STICKY
 
         when (intent.action) {
             ACTION_DEVICE_APPEARED -> addCameraClient(device)

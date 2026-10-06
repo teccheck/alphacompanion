@@ -12,7 +12,7 @@ import java.util.TimeZone
 import kotlin.experimental.and
 
 // For this service wrapper to send location data, a call to init is required
-class GattServiceLocation(gatt: QueueingBluetoothGatt, private val onInit: () -> Unit) :
+class GattServiceLocation(gatt: QueueingBluetoothGatt) :
     GattService("8000DD00-DD00-FFFF-FFFF-FFFFFFFFFFFF", gatt) {
 
     private val statusCharacteristic: BluetoothGattCharacteristic =
@@ -112,7 +112,6 @@ class GattServiceLocation(gatt: QueueingBluetoothGatt, private val onInit: () ->
 
         val sendTz = data.getOrNull(4)?.let { (it and 2) == 2.toByte() } ?: false
         this.config = LocationServiceConfig(sendTz)
-        this.onInit()
     }
 
     private data class LocationServiceConfig(val shouldSendTimeZone: Boolean)
