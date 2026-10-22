@@ -55,6 +55,11 @@ data class SonyCamManufacturerData(
         SonyCamBleFunction.Any -> false
     }
 
+    fun getCameraModel() = when(version) {
+        VERSION_ILCE_6400 -> SonyCameraModel.ILCE_6400
+        else -> SonyCameraModel.UNKNOWN
+    }
+
     companion object {
         const val TAG = "SonyCamManufacturerData"
         const val SONY_ID: Short = 0x012D
@@ -62,6 +67,8 @@ data class SonyCamManufacturerData(
         const val TAG_GENERAL: Byte = 33
         const val TAG_BLE: Byte = 34
         const val TAG_PHONE: Byte = 35
+
+        const val VERSION_ILCE_6400: Short = 0x6400
 
         fun fromScanRecord(scanRecord: ScanRecord): SonyCamManufacturerData? {
             val sonyData = scanRecord.getManufacturerSpecificData(SONY_ID.toInt()) ?: return null

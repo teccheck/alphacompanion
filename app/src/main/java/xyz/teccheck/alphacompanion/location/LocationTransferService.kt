@@ -16,6 +16,8 @@ import android.location.LocationManager
 import android.location.LocationRequest
 import android.net.MacAddress
 import android.os.CancellationSignal
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -26,6 +28,8 @@ import xyz.teccheck.alphacompanion.ble.SonyBleCamClient
 
 class LocationTransferService : Service() {
     private val activeClients: MutableMap<MacAddress, SonyBleCamClient> = mutableMapOf()
+    private val scanningDevices = mutableListOf<String>()
+    private val scanTimeoutHandler = Handler(Looper.getMainLooper())
 
     private val notificationManager: NotificationManager by lazy {
         applicationContext.getSystemService()!!
@@ -70,8 +74,9 @@ class LocationTransferService : Service() {
 
         if (activeClients.isEmpty()) {
             stopLocationUpdates()
-            stopSelf()
         }
+
+        startDeviceScan(device)
 
         updateNotification()
     }
@@ -149,6 +154,14 @@ class LocationTransferService : Service() {
             .setSmallIcon(R.drawable.baseline_gps_fixed_24)
             .setOngoing(true)
             .build()
+    }
+
+    private fun startDeviceScan(device: BluetoothDevice) {
+        //scanTimeoutHandler.postDelayed()
+    }
+
+    private fun maybeStopSelf() {
+        if (activeClients.isEmpty()) stopSelf()
     }
 
     override fun onCreate() {

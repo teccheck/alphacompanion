@@ -35,7 +35,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AlphaCompanion">
+        android:theme="@style/Theme.AlphaCompanion"
+        android:name=".AlphaCompanionApp">
         <activity
             android:name=".MainActivity"
             android:exported="true"
