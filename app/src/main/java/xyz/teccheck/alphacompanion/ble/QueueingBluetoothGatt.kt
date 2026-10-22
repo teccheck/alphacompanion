@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattDescriptor
 import android.bluetooth.BluetoothStatusCodes
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresPermission
 
 class QueueingBluetoothGatt(val internal: BluetoothGatt) : BluetoothGattCallback() {
@@ -24,7 +23,6 @@ class QueueingBluetoothGatt(val internal: BluetoothGatt) : BluetoothGattCallback
 
     @RequiresPermission(Manifest.permission.BLUETOOTH_CONNECT)
     fun queueCharacteristicWrite(characteristic: BluetoothGattCharacteristic, data: ByteArray) {
-        Log.d("QBG_Call", "ChrWrite ${characteristic.uuid}")
         queue.addLast(CharacteristicWrite(characteristic, data))
         nextOperation()
     }
@@ -50,7 +48,6 @@ class QueueingBluetoothGatt(val internal: BluetoothGatt) : BluetoothGattCallback
     }
 
     private fun operationDone() {
-        Log.d("QBG", "Op done")
         operationRunning = false
         nextOperation()
     }
