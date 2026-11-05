@@ -70,6 +70,8 @@ data class SonyCamManufacturerData(
 
         const val VERSION_ILCE_6400: Short = 0x6400
 
+        val INVALID = SonyCamManufacturerData(modelCode = "⚡⚡")
+
         fun fromScanRecord(scanRecord: ScanRecord): SonyCamManufacturerData? {
             val sonyData = scanRecord.getManufacturerSpecificData(SONY_ID.toInt()) ?: return null
             return parse(sonyData)

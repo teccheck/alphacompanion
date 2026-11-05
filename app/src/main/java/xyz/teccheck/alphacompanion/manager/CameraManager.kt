@@ -38,7 +38,9 @@ class CameraManager(
         Log.d(TAG, "Add Camera $camera")
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
-            val req = ObservingDevicePresenceRequest.Builder().setAssociationId(camera.associationId).build()
+            val req =
+                ObservingDevicePresenceRequest.Builder().setAssociationId(camera.associationId)
+                    .build()
             cdm.startObservingDevicePresence(req)
         } else {
             cdm.startObservingDevicePresence(camera.macAddress)
@@ -59,13 +61,16 @@ class CameraManager(
         cleanup()
     }
 
-    suspend fun requestDeviceAssociation(): IntentSender {
+    suspend fun requestDeviceAssociation(disableDeviceFilter: Boolean): IntentSender {
         val deviceFilter = BluetoothLeDeviceFilter.Builder()
             .setScanFilter(buildSonyCameraScanFilter())
             .build()
 
-        val pairingRequest: AssociationRequest = AssociationRequest.Builder()
-            .addDeviceFilter(deviceFilter)
+        val builder = AssociationRequest.Builder()
+
+        if (!disableDeviceFilter) builder.addDeviceFilter(deviceFilter)
+
+        val pairingRequest: AssociationRequest = builder
             .setSingleDevice(false)
             .build()
 
@@ -114,9 +119,9 @@ class CameraManager(
                 AssociationInfo::class.java,
             ) ?: return
 
-            val manufacturerData =
-                SonyCamManufacturerData.fromScanRecord(association.associatedDevice!!.bleDevice!!.scanRecord!!)
-                    ?: return
+            val scanRecord = association.associatedDevice?.bleDevice?.scanRecord ?: return
+            val manufacturerData = SonyCamManufacturerData.fromScanRecord(scanRecord)
+                ?: SonyCamManufacturerData.INVALID
 
             val camera = SonyCamera(
                 association.deviceMacAddress.toString(),
@@ -124,6 +129,7 @@ class CameraManager(
                 association.displayName.toString(),
                 manufacturerData.version,
                 manufacturerData.modelCode,
+                scanRecord.bytes.toHexString()
             )
 
             addCamera(camera)
@@ -133,8 +139,9 @@ class CameraManager(
                 result.data!!.getParcelableExtra<ScanResult>(CompanionDeviceManager.EXTRA_DEVICE)
                     ?: return
 
+            val scanRecord = scanResult.scanRecord ?: return
             val manufacturerData =
-                SonyCamManufacturerData.fromScanRecord(scanResult.scanRecord!!)
+                SonyCamManufacturerData.fromScanRecord(scanRecord)
                     ?: return
 
             val camera = SonyCamera(
@@ -143,6 +150,7 @@ class CameraManager(
                 scanResult.device.name,
                 manufacturerData.version,
                 manufacturerData.modelCode,
+                scanRecord.bytes.toHexString()
             )
 
             addCamera(camera)

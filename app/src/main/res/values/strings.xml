@@ -2,6 +2,7 @@
     <string name="app_name">Compαnion</string>
 
     <string name="pair_new_camera">Pair Camera</string>
+    <string name="pair_new_camera_desc">Long press to see all devices</string>
     <string name="content_description_add_icon">Add</string>
     <string name="content_description_camera_icon">Camera Icon</string>
     <string name="content_description_delete_icon">Delete</string>

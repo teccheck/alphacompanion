@@ -11,4 +11,5 @@ data class SonyCamera(
     @ColumnInfo("name") val name: String,
     @ColumnInfo("model_version") val modelVersion: Short,
     @ColumnInfo("model_code") val modeCode: String,
+    @ColumnInfo("scan_record") val scanRecordData: String = "",
 )

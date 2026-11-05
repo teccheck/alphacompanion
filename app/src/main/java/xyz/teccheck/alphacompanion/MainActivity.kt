@@ -115,7 +115,7 @@ class MainActivity : ComponentActivity() {
             cameras,
             onPairNew = {
                 scope.launch {
-                    val intentSender = cameraManager.requestDeviceAssociation()
+                    val intentSender = cameraManager.requestDeviceAssociation(it)
                     launcher.launch(IntentSenderRequest.Builder(intentSender).build())
                 }
             },

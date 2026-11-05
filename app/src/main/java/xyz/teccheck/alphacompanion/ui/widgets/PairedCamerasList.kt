@@ -42,7 +42,7 @@ import kotlin.math.abs
 @Composable
 fun PairedCamerasList(
     cameras: List<SonyCamera>,
-    onPairNew: () -> Unit,
+    onPairNew: (Boolean) -> Unit,
     onClick: (SonyCamera) -> Unit,
     onRemove: (SonyCamera) -> Unit
 ) {
@@ -65,10 +65,12 @@ fun PairedCamerasList(
                 shapes = ListItemDefaults.segmentedShapes(index = 0, count = 1),
                 colors = colors,
                 content = { Text(text = stringResource(R.string.pair_new_camera)) },
+                supportingContent = { Text(text = stringResource(R.string.pair_new_camera_desc)) },
                 leadingContent = {
                     SettingsRowIcon(painterResource(R.drawable.baseline_add_24))
                 },
-                onClick = onPairNew,
+                onClick = { onPairNew(false) },
+                onLongClick = { onPairNew(true) }
             )
         }
 
