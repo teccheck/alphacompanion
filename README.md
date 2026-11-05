@@ -4,6 +4,10 @@
 
 A simple Android app to stream location data to your Sony Alpha camera.
 
+## Startup
+
+Currently, the app does **not** ask for permissions and will crash if it does not have them. You can go into the settings and grant them manually. This will be fixed in future releases.
+
 ## Debugging Problems
 
 I only have an Alpha 6400 to test this app with. As far as I can tell it should work with any 6000 series camera, but the 7 series will probably not work yet.
