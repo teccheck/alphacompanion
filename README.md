@@ -1,12 +1,12 @@
 # Alpha Companion
 
-**⚠️ This app is still quite experimental, but feedback is very welcome! ⚠️**
+**⚠️ This app is still quite experimental, so feedback is very welcome! ⚠️**
 
-A simple Android app to stream location data to your Sony Alpha camera.
+A simple Android app to stream location data to your Sony Alpha camera. It works with the Android OS to be more reliable and stable than the original Sony app.
 
 ## Startup
 
-Currently, the app does **not** ask for permissions and will crash if it does not have them. You can go into the settings and grant them manually. This will be fixed in future releases.
+Currently, Alpha Companion does **not** ask for permissions and will crash if it does not have them. You can go into the settings and grant them manually. This will be fixed in future releases.
 
 ## Debugging Problems
 
