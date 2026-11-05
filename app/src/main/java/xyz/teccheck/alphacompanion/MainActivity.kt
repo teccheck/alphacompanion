@@ -1,5 +1,6 @@
 package xyz.teccheck.alphacompanion
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -10,26 +11,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.launch
 import xyz.teccheck.alphacompanion.manager.CameraManager
 import xyz.teccheck.alphacompanion.ui.theme.AlphaCompanionTheme
 import xyz.teccheck.alphacompanion.ui.widgets.PairedCamerasList
+import xyz.teccheck.alphacompanion.ui.widgets.TopBar
 
 private const val TAG = "MainActivity"
 
@@ -65,35 +57,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    fun TopBar(modifier: Modifier = Modifier, showBackButton: Boolean, onBack: () -> Unit) {
-        TopAppBar(
-            modifier = modifier,
-            colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainer
-            ),
-            navigationIcon = {
-                if (showBackButton) {
-                    FilledIconButton(
-                        modifier = Modifier.padding(8.dp),
-                        colors = IconButtonDefaults.filledIconButtonColors(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        onClick = onBack
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.baseline_arrow_back_24),
-                            contentDescription = stringResource(R.string.content_description_back_icon),
-                        )
-                    }
-                }
-            },
-            title = {
-                Text(stringResource(R.string.app_name))
-            },
-        )
-    }
+
 
     @Composable
     private fun DevicesScreen(
@@ -119,7 +83,11 @@ class MainActivity : ComponentActivity() {
                     launcher.launch(IntentSenderRequest.Builder(intentSender).build())
                 }
             },
-            onClick = { },
+            onClick = {
+                val intent = Intent(this, DeviceDetailsActivity::class.java)
+                intent.putExtra(DeviceDetailsActivity.EXTRA_ADDRESS, it.macAddress)
+                startActivity(intent)
+            },
             onRemove = { scope.launch { cameraManager.removeCamera(it) } },
         )
     }

@@ -1,6 +1,7 @@
 package xyz.teccheck.alphacompanion
 
 import android.bluetooth.BluetoothGatt
+import android.bluetooth.BluetoothGattService
 import android.companion.DevicePresenceEvent
 import android.os.Build
 import androidx.annotation.RequiresApi
@@ -41,5 +42,15 @@ object LogUtils {
         DevicePresenceEvent.EVENT_SELF_MANAGED_DISAPPEARED -> "EVENT_SELF_MANAGED_DISAPPEARED"
         DevicePresenceEvent.EVENT_ASSOCIATION_REMOVED -> "EVENT_ASSOCIATION_REMOVED"
         else -> "UNKNOWN (${this.event})"
+    }
+
+    fun buildServicesOverview(services: List<BluetoothGattService>): String {
+        return services.joinToString("") { sv ->
+            "SV ${sv.uuid} (${sv.type})\n" + sv.characteristics.joinToString("") { ch ->
+                "  CH ${ch.uuid} (${ch.properties} | ${ch.permissions})\n" + ch.descriptors.joinToString("") { dc ->
+                    "    DC ${dc.uuid} (${dc.permissions})\n"
+                }
+            }
+        }
     }
 }

@@ -19,4 +19,6 @@
 
     <string name="cdm_service_name">Companion Service</string>
     <string name="location_service_name">Location Transfer Service</string>
+
+    <string name="title_activity_device_details">DeviceDetailsActivity</string>
 </resources>
