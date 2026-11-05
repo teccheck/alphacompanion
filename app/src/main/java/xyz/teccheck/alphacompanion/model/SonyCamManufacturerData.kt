@@ -111,7 +111,7 @@ data class SonyCamManufacturerData(
 
                 when (tag) {
                     TAG_GENERAL -> {
-                        val flags = BitSet.valueOf(buffer.alignedSlice(1))
+                        val flags = BitSet.valueOf(byteArrayOf(buffer.get()))
                         isWirelessPowerOnEnabled = flags.get(7)
                         isCameraOn = flags.get(6)
                         isWifiHandoverSupported = flags.get(5)
@@ -119,7 +119,7 @@ data class SonyCamManufacturerData(
                     }
 
                     TAG_BLE -> {
-                        val flags = BitSet.valueOf(buffer.alignedSlice(1))
+                        val flags = BitSet.valueOf(byteArrayOf(buffer.get()))
                         isPairingSupported = flags.get(7)
                         isPairingEnabled = flags.get(6)
                         isLocationFunctionSupported = flags.get(5)
@@ -127,7 +127,7 @@ data class SonyCamManufacturerData(
                     }
 
                     TAG_PHONE -> {
-                        val flags = BitSet.valueOf(buffer.alignedSlice(1))
+                        val flags = BitSet.valueOf(byteArrayOf(buffer.get()))
                         isSmartphoneRemoteControlSupported = flags.get(7)
                         isSmartphoneRemoteControlEnabled = flags.get(5)
                         isSmartphoneImageTransferSupported = flags.get(4)
